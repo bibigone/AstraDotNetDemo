@@ -1,0 +1,312 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C8C0D93E-4009-4264-BA52-49DE708F5CCE}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>AstraTestWpf</RootNamespace>
+    <AssemblyName>AstraTestWpf</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AstraDotNet, Version=0.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\externals\AstraSDK.bin\amd64\AstraDotNet.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="BufferOfT.cs" />
+    <Compile Include="ColorBuffer.cs" />
+    <Compile Include="SensorViewModel.cs" />
+    <Compile Include="SensorWindow.xaml.cs">
+      <DependentUpon>SensorWindow.xaml</DependentUpon>
+    </Compile>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AstraDotNetAssemblyResolver.cs" />
+    <Compile Include="DepthBuffer.cs" />
+    <Compile Include="FrameRateCalculator.cs" />
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="SensorWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Content Include="..\externals\AstraSDK.bin\amd64\OpenNI2\Drivers\orbbec.dll">
+      <Link>Astra\amd64\OpenNI2\Drivers\orbbec.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\AstraSDK.bin\amd64\Plugins\openni_sensor.dll">
+      <Link>Astra\amd64\Plugins\openni_sensor.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\AstraSDK.bin\amd64\Plugins\orbbec_hand.dll">
+      <Link>Astra\amd64\Plugins\orbbec_hand.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\AstraSDK.bin\amd64\Plugins\orbbec_xs.dll">
+      <Link>Astra\amd64\Plugins\orbbec_xs.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\AstraSDK.bin\x86\astra.dll">
+      <Link>Astra\x86\astra.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\AstraSDK.bin\x86\AstraDotNet.dll">
+      <Link>Astra\x86\AstraDotNet.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\AstraSDK.bin\x86\astra_core.dll">
+      <Link>Astra\x86\astra_core.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\AstraSDK.bin\x86\astra_core_api.dll">
+      <Link>Astra\x86\astra_core_api.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\AstraSDK.bin\x86\opencv_core248.dll">
+      <Link>Astra\x86\opencv_core248.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\AstraSDK.bin\x86\opencv_highgui248.dll">
+      <Link>Astra\x86\opencv_highgui248.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\AstraSDK.bin\x86\opencv_imgproc248.dll">
+      <Link>Astra\x86\opencv_imgproc248.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\AstraSDK.bin\x86\OpenNI2.dll">
+      <Link>Astra\x86\OpenNI2.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\AstraSDK.bin\x86\OpenNI2\Drivers\orbbec.dll">
+      <Link>Astra\x86\OpenNI2\Drivers\orbbec.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\AstraSDK.bin\x86\Plugins\openni_sensor.dll">
+      <Link>Astra\x86\Plugins\openni_sensor.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\AstraSDK.bin\x86\Plugins\orbbec_hand.dll">
+      <Link>Astra\x86\Plugins\orbbec_hand.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\AstraSDK.bin\x86\Plugins\orbbec_xs.dll">
+      <Link>Astra\x86\Plugins\orbbec_xs.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\Microsoft.VC120.CRT\amd64\msvcp120.dll">
+      <Link>Astra\amd64\msvcp120.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\Microsoft.VC120.CRT\amd64\msvcr120.dll">
+      <Link>Astra\amd64\msvcr120.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\Microsoft.VC120.CRT\amd64\vccorlib120.dll">
+      <Link>Astra\amd64\vccorlib120.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\Microsoft.VC120.CRT\amd64\vcomp120.dll">
+      <Link>Astra\amd64\vcomp120.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\Microsoft.VC120.CRT\x86\msvcp120.dll">
+      <Link>Astra\x86\msvcp120.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\Microsoft.VC120.CRT\x86\msvcr120.dll">
+      <Link>Astra\x86\msvcr120.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\Microsoft.VC120.CRT\x86\vccorlib120.dll">
+      <Link>Astra\x86\vccorlib120.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\Microsoft.VC120.CRT\x86\vcomp120.dll">
+      <Link>Astra\x86\vcomp120.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\Microsoft.VC141.CRT\amd64\concrt140.dll">
+      <Link>Astra\amd64\concrt140.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\Microsoft.VC141.CRT\amd64\msvcp140.dll">
+      <Link>Astra\amd64\msvcp140.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\Microsoft.VC141.CRT\amd64\vccorlib140.dll">
+      <Link>Astra\amd64\vccorlib140.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\Microsoft.VC141.CRT\amd64\vcruntime140.dll">
+      <Link>Astra\amd64\vcruntime140.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\Microsoft.VC141.CRT\x86\concrt140.dll">
+      <Link>Astra\x86\concrt140.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\Microsoft.VC141.CRT\x86\msvcp140.dll">
+      <Link>Astra\x86\msvcp140.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\Microsoft.VC141.CRT\x86\vccorlib140.dll">
+      <Link>Astra\x86\vccorlib140.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\Microsoft.VC141.CRT\x86\vcruntime140.dll">
+      <Link>Astra\x86\vcruntime140.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <Content Include="..\externals\AstraSDK.bin\amd64\astra.toml">
+      <Link>Astra\amd64\astra.toml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\AstraSDK.bin\amd64\OpenNI.ini">
+      <Link>Astra\amd64\OpenNI.ini</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\AstraSDK.bin\x86\astra.toml">
+      <Link>Astra\x86\astra.toml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\AstraSDK.bin\x86\OpenNI.ini">
+      <Link>Astra\x86\OpenNI.ini</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\AstraSDK.bin\x86\Plugins\orbbec_hand.toml">
+      <Link>Astra\x86\Plugins\orbbec_hand.toml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\AstraSDK.bin\x86\OpenNI2\Drivers\orbbec.ini">
+      <Link>Astra\x86\OpenNI2\Drivers\orbbec.ini</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\AstraSDK.bin\amd64\Plugins\orbbec_hand.toml">
+      <Link>Astra\amd64\Plugins\orbbec_hand.toml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\AstraSDK.bin\amd64\OpenNI2\Drivers\orbbec.ini">
+      <Link>Astra\amd64\OpenNI2\Drivers\orbbec.ini</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\externals\AstraSDK.bin\amd64\astra.dll">
+      <Link>Astra\amd64\astra.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\AstraSDK.bin\amd64\AstraDotNet.dll">
+      <Link>Astra\amd64\AstraDotNet.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\AstraSDK.bin\amd64\astra_core.dll">
+      <Link>Astra\amd64\astra_core.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\AstraSDK.bin\amd64\astra_core_api.dll">
+      <Link>Astra\amd64\astra_core_api.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\AstraSDK.bin\amd64\opencv_core248.dll">
+      <Link>Astra\amd64\opencv_core248.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\AstraSDK.bin\amd64\opencv_highgui248.dll">
+      <Link>Astra\amd64\opencv_highgui248.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\AstraSDK.bin\amd64\opencv_imgproc248.dll">
+      <Link>Astra\amd64\opencv_imgproc248.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\AstraSDK.bin\amd64\OpenNI2.dll">
+      <Link>Astra\amd64\OpenNI2.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\AstraSDK.bin\LICENSE.txt">
+      <Link>Astra\LICENSE.txt</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

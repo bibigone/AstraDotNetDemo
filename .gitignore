@@ -1,0 +1,12 @@
+Thumbs.db
+*.vs
+*.suo
+*.sdf
+*.opensdf
+*.aps
+*.user
+*.bak
+*.orig
+bin
+obj
+packages

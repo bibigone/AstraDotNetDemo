@@ -1,0 +1,24 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="AstraTestWpf.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="ColorFps" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">30</Value>
+    </Setting>
+    <Setting Name="ColorWidth" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">640</Value>
+    </Setting>
+    <Setting Name="ColorHeight" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">480</Value>
+    </Setting>
+    <Setting Name="DepthFps" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">30</Value>
+    </Setting>
+    <Setting Name="DepthWidth" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">640</Value>
+    </Setting>
+    <Setting Name="DepthHeight" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">480</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
