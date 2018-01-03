@@ -48,7 +48,7 @@ namespace AstraTestWpf
                 && args.Name.StartsWith(AssemblyName, StringComparison.InvariantCultureIgnoreCase))
             {
                 var appDomain = (AppDomain)sender;
-                var path = Path.Combine(appDomain.BaseDirectory, DirName, Environment.Is64BitProcess ? SubDir64bit : SubDir64bit);
+                var path = Path.Combine(appDomain.BaseDirectory, DirName, Environment.Is64BitProcess ? SubDir64bit : SubDir32bit);
                 path = Path.Combine(path, AssemblyName + ".dll");
                 if (File.Exists(path))
                     return Assembly.LoadFrom(path);
