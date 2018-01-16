@@ -74,7 +74,14 @@
                           IsChecked="{Binding IsDepthMirroring}"/>
             </Grid>
         </StackPanel>
-        <Image Grid.Column="0" Grid.Row="1" Source="{Binding DepthImageSource, Mode=OneWay}"/>
+        <Image Grid.Column="0" Grid.Row="1" Source="{Binding DepthImageSource, Mode=OneWay}">
+            <Image.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Copy to clipboard"
+                              Click="CopyDepthImageToClipboard"/>
+                </ContextMenu>
+            </Image.ContextMenu>
+        </Image>
         <!-- COLOR -->
         <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical">
             <TextBlock Style="{StaticResource Header}">
@@ -101,7 +108,14 @@
                           IsChecked="{Binding IsColorMirroring}"/>
             </Grid>
         </StackPanel>
-        <Image Grid.Column="1" Grid.Row="1" Source="{Binding ColorImageSource, Mode=OneWay}"/>
+        <Image Grid.Column="1" Grid.Row="1" Source="{Binding ColorImageSource, Mode=OneWay}">
+            <Image.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Copy to clipboard"
+                              Click="CopyColorImageToClipboard"/>
+                </ContextMenu>
+            </Image.ContextMenu>
+        </Image>
         <!-- FPS -->
         <Grid Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" Margin="1" Background="LightGray">
             <Grid.ColumnDefinitions>

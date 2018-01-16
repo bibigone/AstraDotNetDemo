@@ -48,7 +48,7 @@ namespace AstraTestWpf
         /// <summary>
         /// Image with visualized frame. You can use this property in WPF controls/windows.
         /// </summary>
-        public ImageSource ImageSource => writeableBitmap;
+        public BitmapSource ImageSource => writeableBitmap;
 
         /// <summary>
         /// Updates <c>ImageSource</c> based on <c>Astra.ImageFrame</c>, received from Astra sensor.

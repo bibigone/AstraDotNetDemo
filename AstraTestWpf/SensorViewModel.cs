@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
 namespace AstraTestWpf
@@ -136,7 +136,7 @@ namespace AstraTestWpf
         public string DepthFieldOfView { get; }
 
         /// <summary>Visualized depth map received from sensor.</summary>
-        public ImageSource DepthImageSource => depthBuffer?.ImageSource;
+        public BitmapSource DepthImageSource => depthBuffer?.ImageSource;
 
         /// <summary>Is depth map mirroring? Can be changed on the fly.</summary>
         public bool IsDepthMirroring
@@ -173,7 +173,7 @@ namespace AstraTestWpf
         public string ColorFieldOfView { get; }
 
         /// <summary>Color frame received from sensor.</summary>
-        public ImageSource ColorImageSource => colorBuffer?.ImageSource;
+        public BitmapSource ColorImageSource => colorBuffer?.ImageSource;
 
         /// <summary>Is color image mirroring? Can be changed on the fly.</summary>
         public bool IsColorMirroring
