@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
@@ -20,11 +21,13 @@ namespace AstraTestWpf
         /// <param name="dispatcher">Dispatcher of WPF window. That is dispatcher of UI thread.</param>
         /// <param name="streamSet">Stream set for sensor. Should be created using <c></c>.</param>
         /// <param name="withColor">Show color stream along with depth stream?</param>
+        /// <param name="withBodyTracking">Perform body tracking and visualize skeleton?</param>
         public SensorViewModel(
             Properties.Settings settings,
             Dispatcher dispatcher,
             Astra.StreamSet streamSet,
-            bool withColor)
+            bool withColor,
+            bool withBodyTracking)
         {
             this.dispatcher = dispatcher;
             this.streamSet = streamSet;
@@ -65,9 +68,17 @@ namespace AstraTestWpf
                     }
                 }
 
+                // Body tracking (optional)
+                if (withBodyTracking)
+                {
+                    bodyStream = streamReader.GetStream<Astra.BodyStream>();
+                    bodyVisualizer = new BodyVisualizer(dispatcher, depthMode.Width, depthMode.Height);
+                }
+
                 // Start streaming
                 depthStream.Start();
                 colorStream?.Start();
+                bodyStream?.Start();
 
                 // Run background thread to process frames
                 running = true;
@@ -101,7 +112,7 @@ namespace AstraTestWpf
                     && m.Width == width
                     && m.Height == height);
             if (mode == null)
-                throw new NotSupportedException("Depth stream doesn't support required mode (VGA at 30 FPS)");
+                throw new NotSupportedException($"Depth stream doesn't support required mode ({width}x{height} at {fps} FPS)");
             depthStream.SetMode(mode);
             depthStream.IsMirroring = false;        // Turn off mirroring by default
             return mode;
@@ -173,6 +184,7 @@ namespace AstraTestWpf
         public string ColorFieldOfView { get; }
 
         /// <summary>Color frame received from sensor.</summary>
+        /// <remarks>Can be <c>null</c> here because color stream is optional.</remarks>
         public BitmapSource ColorImageSource => colorBuffer?.ImageSource;
 
         /// <summary>Is color image mirroring? Can be changed on the fly.</summary>
@@ -190,6 +202,10 @@ namespace AstraTestWpf
             }
         }
 
+        /// <summary>Visualization of body tracking - skeletons. Shown on UI as overlay over depth map image.</summary>
+        /// <remarks>Can be <c>null</c> here because body tracking is optional.</remarks>
+        public ImageSource BodyImageSource => bodyVisualizer?.ImageSource;
+
         #region IDisposable
 
         /// <summary>
@@ -199,22 +215,35 @@ namespace AstraTestWpf
         {
             running = false;
             backgroundProcessingThread.Join();
-            StopStreamNoThrow(colorStream);
-            StopStreamNoThrow(depthStream);
-            streamReader.Dispose();
-            streamSet.Dispose();
+            StopStreamNoThrow(bodyStream, nameof(bodyStream));
+            StopStreamNoThrow(colorStream, nameof(colorStream));
+            StopStreamNoThrow(depthStream, nameof(depthStream));
+            SafeDispose(streamReader, nameof(streamReader));
+            SafeDispose(streamSet, nameof(streamSet));
             frameRateCalculator.Reset();
         }
 
-        private void StopStreamNoThrow(Astra.DataStream stream)
+        private static void StopStreamNoThrow(Astra.DataStream stream, string streamName)
         {
             try
             {
                 stream?.Stop();
             }
-            catch (Exception exc)
+            catch (Astra.AstraException exc)
             {
-                Trace.TraceWarning("Cannot stop stream: " + exc.Message);
+                Trace.TraceWarning($"Cannot stop stream {streamName}: {exc.Message}");
+            }
+        }
+
+        private static void SafeDispose(IDisposable astraObject, string objName)
+        {
+            try
+            {
+                astraObject?.Dispose();
+            }
+            catch (Astra.AstraException exc)
+            {
+                Trace.TraceWarning($"Cannot dispose object {objName}: {exc.Message}");
             }
         }
 
@@ -258,8 +287,13 @@ namespace AstraTestWpf
                         }
                     }
                 }
-                catch (Astra.AstraException)
-                { }
+                catch (Astra.AstraException exc)
+                {
+                    // As a rule, exception here means that sensor was unplugged.
+                    InformUserAboutError(exc);
+                    running = false;
+                    break;
+                }
 
                 Thread.Sleep(5);            // To avoid too high load of one CPU core
             }
@@ -268,26 +302,42 @@ namespace AstraTestWpf
         // Handling of new frame
         private void HandleFrame(Astra.ReaderFrame frame)
         {
-            var depthFrame = frame.GetFrame<Astra.DepthFrame>();
-            if (depthFrame != null)
-            {
-                if (depthBuffer.Update(depthFrame))
-                {
-                    if (frameRateCalculator.RegisterFrame())
-                    {
-                        RaisePropertyChanged(nameof(FramesPerSecond));
-                    }
-                }
-            }
-
+            HandleDepthFrame(frame);
             if (colorBuffer != null)
-            {
-                var colorFrame = frame.GetFrame<Astra.ColorFrame>();
-                if (colorFrame != null)
-                {
-                    colorBuffer.Update(colorFrame);
-                }
-            }
+                HandleColorFrame(frame);
+            if (bodyVisualizer != null)
+                HandleBodyFrame(frame);
+        }
+
+        private void HandleDepthFrame(Astra.ReaderFrame frame)
+        {
+            var depthFrame = frame.GetFrame<Astra.DepthFrame>();
+            if (depthBuffer.Update(depthFrame))
+                if (frameRateCalculator.RegisterFrame())
+                    RaisePropertyChanged(nameof(FramesPerSecond));
+        }
+
+        private void HandleColorFrame(Astra.ReaderFrame frame)
+        {
+            var colorFrame = frame.GetFrame<Astra.ColorFrame>();
+            colorBuffer.Update(colorFrame);
+        }
+
+        private void HandleBodyFrame(Astra.ReaderFrame frame)
+        {
+            var bodyFrame = frame.GetFrame<Astra.BodyFrame>();
+            bodyVisualizer.Update(bodyFrame);
+        }
+
+        private void InformUserAboutError(Astra.AstraException exc)
+        {
+            var message = $"Depth sensor error: {exc.Message}. Looks like that depth sensor was unplugged from USB port.";
+            dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, new Action(() => ShowErrorBox(message)));
+        }
+
+        private static void ShowErrorBox(string message)
+        {
+            System.Windows.MessageBox.Show(message, "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
         }
 
         #endregion
@@ -296,9 +346,11 @@ namespace AstraTestWpf
         private readonly Astra.StreamSet streamSet;
         private readonly Astra.StreamReader streamReader;
         private readonly Astra.DepthStream depthStream;
-        private readonly Astra.ColorStream colorStream;
+        private readonly Astra.ImageStream colorStream;
+        private readonly Astra.BodyStream bodyStream;
         private readonly DepthBuffer depthBuffer;
         private readonly ColorBuffer colorBuffer;
+        private readonly BodyVisualizer bodyVisualizer;
         private readonly FrameRateCalculator frameRateCalculator = new FrameRateCalculator(smoothCoeff: 0.75f);
         private readonly Thread backgroundProcessingThread;
         private volatile bool running;

@@ -4,7 +4,8 @@ This is a simple .Net solution to demonstrate working with [Orbbec Astra (Pro)](
 
 ### Features:
 
-* Visalization of depth and color streams
+* Visualization of depth and color streams
+* Visualization of body tracking (as stick skeletons over depth map)
 * Calculation of actual FPS
 * Support for multiple sensors connected to one PC
 
@@ -14,13 +15,6 @@ This is a simple .Net solution to demonstrate working with [Orbbec Astra (Pro)](
 * Open `AstraDotNetDemo.sln` in Visual Studio 2017
 * Build and run `AstraTestWpf` application (F5)
 * All required binaries and libraries are already in repository (see `externals` folder)
-
-
-### Notes:
-
-* Directory `externals\AstraSDK.bin` does not contain plugin for body tracking (to save space). This why if you're going to use `BodyStream`, then you have to add `OrbbecBodyTracking.dll` dll-s to `Plugins` subdirs (both, x86 and amd64 versions) and add them to project `AstraTestWpf` as links with the following properties:
-  - Build Action = Content
-  - Copy to Output Directory = Copy if newer 
 
 
 ### Stuff used to make this:

@@ -82,6 +82,17 @@
                 </ContextMenu>
             </Image.ContextMenu>
         </Image>
+
+        <!-- BODY (as overlay over depth map) -->
+        <Image Grid.Column="0" Grid.Row="1" Source="{Binding BodyImageSource, Mode=OneWay}">
+            <Image.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Copy to clipboard"
+                              Click="CopyDepthImageToClipboard"/>
+                </ContextMenu>
+            </Image.ContextMenu>
+        </Image>
+
         <!-- COLOR -->
         <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical">
             <TextBlock Style="{StaticResource Header}">

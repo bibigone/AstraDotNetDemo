@@ -53,7 +53,7 @@ namespace AstraTestWpf
         /// <summary>
         /// Updates <c>ImageSource</c> based on <c>Astra.ImageFrame</c>, received from Astra sensor.
         /// </summary>
-        /// <param name="frame">Frame, received from Astra sensor.</param>
+        /// <param name="frame">Frame, received from Astra sensor. Can be <c>null</c>.</param>
         /// <returns><c>true</c> - updated, <c>false</c> - not updated (frame is not compatible, or old frame).</returns>
         public bool Update(Astra.ImageFrame<T> frame)
         {
