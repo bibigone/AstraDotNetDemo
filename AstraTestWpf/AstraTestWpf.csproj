@@ -108,6 +108,7 @@
     </Content>
     <Content Include="..\externals\AstraSDK.bin\amd64\Plugins\OrbbecBodyTracking.dll">
       <Link>Astra\amd64\Plugins\OrbbecBodyTracking.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="..\externals\AstraSDK.bin\amd64\Plugins\orbbec_hand.dll">
       <Link>Astra\amd64\Plugins\orbbec_hand.dll</Link>
@@ -159,6 +160,7 @@
     </Content>
     <Content Include="..\externals\AstraSDK.bin\x86\Plugins\OrbbecBodyTracking.dll">
       <Link>Astra\x86\Plugins\OrbbecBodyTracking.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="..\externals\AstraSDK.bin\x86\Plugins\orbbec_hand.dll">
       <Link>Astra\x86\Plugins\orbbec_hand.dll</Link>
