@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Windows;
@@ -48,6 +49,8 @@ namespace AstraTestWpf
         /// </summary>
         public ImageSource ImageSource { get; }
 
+        #region Visualization settings (colors, sizes, etc.)
+
         /// <summary>Visualization setting: pen for border around joint circles.</summary>
         public Pen JointBorder { get; set; } = new Pen(Brushes.Black, 2);
 
@@ -68,6 +71,20 @@ namespace AstraTestWpf
 
         /// <summary>Visualization setting: pen to draw bone with low confidence.</summary>
         public Pen LowConfidenceBonePen { get; set; } = new Pen(Brushes.LightYellow, 3);
+
+        /// <summary>Visualization setting: brush to draw text of joint label. Joint label is text near joint circle with information about joint.</summary>
+        public Brush JointLabelForeground { get; set; } = Brushes.LightYellow;
+
+        /// <summary>Visualization setting: brush to draw shadow of joint label's text.</summary>
+        public Brush JointLabelShadow { get; set; } = Brushes.Black;
+
+        /// <summary>Visualization setting: font size for joint label.</summary>
+        public double JointLabelFontSizeEm { get; set; } = 10;
+
+        /// <summary>Visualization setting: font family for joint label.</summary>
+        public string JointLabelFontFamily { get; set; } = "Arial";
+
+        #endregion
 
         /// <summary>
         /// Updates <c>ImageSource</c> based on <c>Astra.BodyFrame</c>, received from Astra sensor.
@@ -113,6 +130,7 @@ namespace AstraTestWpf
             }
         }
 
+        // Draws bone as line (stick) between two joints
         private void DrawBones(DrawingContext dc, Astra.Body body)
         {
             foreach (var bone in bones)
@@ -146,6 +164,7 @@ namespace AstraTestWpf
         private static Point ToImagePoint(Astra.Joint joint)
             => new Point(joint.DepthPosition.X, joint.DepthPosition.Y);
 
+        // Draws joint as circle
         private void DrawJoints(DrawingContext dc, Astra.Body body)
         {
             foreach (var joint in body.Joints)
@@ -163,9 +182,51 @@ namespace AstraTestWpf
                         : LowConfidenceJointCircleRadius;
 
                     dc.DrawEllipse(brush, JointBorder, ToImagePoint(joint), radius, radius);
+
+                    // Show label with 3D coordinates only for one spine joint.
+                    // You can remove the following "if"-statement, in case you want to see labels with 3D coordinates for all joints.
+                    if (joint.Type == Astra.JointType.MidSpine)
+                        DrawJointLabel(dc, joint, radius);
                 }
             }
         }
+
+        // Draws text with 3D coordinates of joint near joint circle
+        private void DrawJointLabel(DrawingContext dc, Astra.Joint joint, double radius)
+        {
+            // joint.WorldPosition - is in millimeters
+            // format as meters with centimeters after decimal point
+            var label = string.Format("{0}\r\nX: {1:0.00} m\r\nY: {2:0.00} m\r\nZ: {3:0.00} m",
+                /*{0}*/ joint.Type,
+                /*{1}*/ MillimetersToMeters(joint.WorldPosition.X),
+                /*{2}*/ MillimetersToMeters(joint.WorldPosition.Y),
+                /*{3}*/ MillimetersToMeters(joint.WorldPosition.Z));
+
+            // formated text of label
+            var txt = new FormattedText(label, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
+                Fonts.SystemTypefaces.First(), JointLabelFontSizeEm, JointLabelShadow);
+            txt.SetFontFamily(JointLabelFontFamily);
+            txt.SetFontStretch(FontStretches.Normal);
+            txt.SetFontStyle(FontStyles.Normal);
+            txt.SetFontWeight(FontWeights.Normal);
+
+            // left-top corner of text label
+            var labelPositionOnImage = ToImagePoint(joint);
+            labelPositionOnImage.X += 1.5 * radius;
+            labelPositionOnImage.Y -= txt.Height / 2.0;
+
+            // draw shadow
+            dc.DrawText(txt, labelPositionOnImage);
+
+            // draw foreground with slight shift
+            txt.SetForegroundBrush(JointLabelForeground);
+            labelPositionOnImage.X -= 2;
+            labelPositionOnImage.Y -= 2;
+            dc.DrawText(txt, labelPositionOnImage);
+        }
+
+        private static double MillimetersToMeters(float millimeters)
+            => millimeters / 1000.0;
 
         private readonly Dispatcher dispatcher;
         private readonly int depthWidth;
