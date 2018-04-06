@@ -1,5 +1,5 @@
-Astra SDK v2.0.7-beta
-Copyright (c) 2015-2017 Orbbec
+Astra SDK v2.0.9-beta3
+Copyright (c) 2015-2018 Orbbec
 https://www.orbbec3d.com
 
 For help and support, visit us at https://3dclub.orbbec3d.com.
@@ -42,13 +42,91 @@ Possibly working systems - these may work but are untested/unsupported at this t
 * Android 6.0, Android 7.0
 * Unity3D 2017, Unity 4.7
 
-Time expiration
+Orbbec Body Tracking trial time expiration
 ===============
-For this beta release, Orbbec Body Tracking expires on 2018/01/31
+For this beta release, Orbbec Body Tracking expires on 2018/06/30
 and will stop operating. Please make sure to update to a new version before then.
+You can now set your license string to extend the trial. See API notes below.
+
+For support on the trial expiration or to extend your trial, please contact
+info@orbbec3d.com.
 
 What's New
 ==========
+
+v2.0.9-beta3 2018/03/31
+
+* Add missing astra_jni.dll for Java wrapper which was omitted from previous release.
+* Add body tracking frame skipping for very low-end CPUs (usually Android devices):
+  If the calculation of a body frame is taking too long, it will estimate the next
+  frame joints based upon the velocity of previous frames. The frame calculation
+  will continue in the background and the results will be incorporated in a future
+  frame. If the CPU is fast enough then this feature will not change body tracking
+  behavior.
+* Add isEstimated to determine if the body frame has been estimated due to extremely slow CPU.
+  Typically this will only happen on very low-end Android devices.
+  C: astra_bodyframe_info_t.isEstimated
+  C++: BodyFrameInfo::is_estimated()
+  C#: BodyFrameInfo.IsEstimated
+  Java: BodyFrameInfo.getIsEstimated()
+* astra_imagestream_get_usb_info()/ColorStream::usb_info() is now supported on
+  Astra Pro color stream
+* Minor improvements to the public headers (fixed some missing includes)
+* Fix Android support on certain boxes: crashes, Astra Pro support
+* Android will now write Astra SDK logs to the Android log (logcat)
+* Minor improvements to error checking in the sample projects
+* Fix issue with BodyStream that prevented it from starting again after it was
+  previously started and then stopped.
+* Slightly reduce RAM usage and improve startup time of body tracking
+* Fix issue with SimpleBodyViewer-SFML running at low FPS by changing depth resolution
+  from 160x120 to 640x480. (320x240 would also work.) There is a bug in some Astra
+  firmwares that causes 160x120 to run at a slower framerate.
+* Fix issue with color stream not working on Astra Mini
+* Fix issue where MaskedColorStream would crash when user was farther than 2m
+  when using an Astra camera with MX400 chip.
+
+v2.0.8-beta2 2018/01/31
+
+Full list of changes upcoming with final v2.0 release. This version has some small
+breaking API changes. Be aware, there will be more breaking API changes between
+now and the final v2.0 release.
+
+New features:
+* On Android with UVC color (Astra Pro & Persee), the API now supports listing the
+  available resolutions, getting the current resolution, and setting the resolution.
+  For low-end Android devices we recommend running color at 320x240 for performance
+  reasons.
+* Add body tracking feature API that lets you control the processing done for a tracked body:
+  just segmentation, joints, hand poses. Each level includes the previous (hand poses
+  includes joints and joints includes segmentation.) You can set the default for
+  new bodies as well as change how a body is tracked for future frames.
+  C: astra_body_t has the astra_body_features_t features field, which reflects the
+     features used to generate the astra_body_t.
+     astra_bodystream_get_body_features(), astra_bodystream_set_body_features(),
+     astra_bodystream_get_default_body_features(), astra_bodystream_set_default_body_features()
+  C++: Body::joints_enabled(), Body::hand_poses_enabled(),
+       BodyStream::get_body_features(), BodyStream::set_body_features(),
+       BodyStream::get_default_body_features(), BodyStream::set_default_body_features()
+  C#: Body.AreJointsEnabled, Body.AreHandPosesEnabled,
+      BodyStream.GetBodyFeatures(), BodyStream.SetBodyFeatures(),
+      BodyStream.GetDefaultBodyFeatures(), BodyStream.SetDefaultBodyFeatures()
+  Java: Body.areJointsEnabled(), Body.areHandPosesEnabled(),
+        BodyStream.getBodyFeatures(), BodyStream.setBodyFeatures(),
+        BodyStream.getDefaultBodyFeatures(), BodyStream.setDefaultBodyFeatures()
+* Add license API:
+  C/C++: orbbec_body_tracking_set_license(const char* licenseString)
+  C#: Astra.BodyTracking.SetLicense(String licenseString)
+  Java: BodyTracking.setLicense(String licenseString)
+  Call these methods directly after astra_initialize() with the license key string
+  provided to you by Orbbec.
+* Orbbec Body Tracking trial expiration set to March 31, 2018
+* Add Chinese translation of Astra Book documentation in docs/html-zh_CN
+* Java and C# APIs updated to match features of C++ API
+* MaskedColor calculation is now 3x faster
+* C#: FloorMask now has CopyData() and IntPtr DataPtr to reduce memory allocations
+* C++: Fixed bug where Neck joint was id 19 when it should have been id 18
+* OpenNI2 backend updated with MX6000 chip support
+* Various bug fixes
 
 v2.0.7-beta 2017/12/16
 
@@ -255,11 +333,9 @@ Known Issues
 * Bone orientation/rotation can be inconsistent if passing through ambiguous positions, such as
   rotating the arm while it is straight out with the elbow unbent.
 
-* On PCs body tracking easily runs in real-time but there is an SFML compatibility bug we haven't fixed yet
-  that causes some of the body samples such as SimpleBodyViewer-SFML to have slow performance.
-
 * On Android, body tracking performance is being improved. With all streams running, our
-  Unity sample gets roughly 15 FPS on Orbbec Persee.
+  Unity sample gets roughly 17 FPS on Orbbec Persee. With just the body stream, the Unity
+  sample gets 30 FPS on Orbbec Persee.
 
 * There are some APIs that are missing: camera hardware configuration (white balance, exposure, etc.),
   controlling the IR projector and Astra Mini IR flood, etc. These are coming soon.

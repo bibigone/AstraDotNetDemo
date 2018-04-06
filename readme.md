@@ -21,7 +21,7 @@ This is a simple .Net solution to demonstrate working with [Orbbec Astra (Pro)](
 
  * [.Net Framework 4.6.1](https://www.microsoft.com/en-us/download/details.aspx?id=49981)
  * [Visual Studio 2017](https://www.visualstudio.com/downloads/) (Commutiny Edition)
- * [Astra SDK v2.0.7](https://orbbec3d.com/develop/) (win32 and win64 versions for VS 2015)
+ * [Astra SDK v2.0.9](https://orbbec3d.com/develop/) (win32 and win64 versions for VS 2015)
 
 
 

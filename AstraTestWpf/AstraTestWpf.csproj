@@ -98,6 +98,10 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Content Include="..\externals\AstraSDK.bin\amd64\opencv_video248.dll">
+      <Link>Astra\amd64\opencv_video248.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="..\externals\AstraSDK.bin\amd64\OpenNI2\Drivers\orbbec.dll">
       <Link>Astra\amd64\OpenNI2\Drivers\orbbec.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -144,6 +148,10 @@
     </Content>
     <Content Include="..\externals\AstraSDK.bin\x86\opencv_imgproc248.dll">
       <Link>Astra\x86\opencv_imgproc248.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\externals\AstraSDK.bin\x86\opencv_video248.dll">
+      <Link>Astra\x86\opencv_video248.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="..\externals\AstraSDK.bin\x86\OpenNI2.dll">

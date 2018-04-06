@@ -1,7 +1,7 @@
 [logging]
 # trace, debug, info, warn, error, fatal
-level = "info"
+level = "error"
 console_output = true
-file_output = false
+file_output = true
 [plugins]
 #path = "Plugins"
