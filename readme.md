@@ -19,6 +19,17 @@ This is a simple .Net solution to demonstrate working with [Orbbec Astra (Pro)](
 * All required binaries and libraries are already in repository (see `externals` folder) and are copied automatically to output directory during build
 
 
+### Known issues in Astra SDK:
+
+1. For Astra PRO actual frame rate is not exactly 30 FPS. It is about 29.7 FPS for depth only mode, and about 28.5 FPS for depth+color mode.
+2. When more than one sensor is connected to one and the same PC, the following limitations take place:
+ * For Astra PRO sensors: lowering of frame rate to 15 FPS if color stream is on
+ * For Astra PRO sensors: you can see live color stream only from one sensor (black screen for other sensors)
+ * Body (skeletal) tracking works poorly if it is turned on for more than one sensor
+3. Wrong information about field-of-view for color stream.
+4. Donot unplug sensor while application is running. In other case application may crash on exit.
+
+
 ### Stuff used to make this:
 
  * [.Net Framework 4.6.1](https://www.microsoft.com/en-us/download/details.aspx?id=49981)
