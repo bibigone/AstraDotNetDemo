@@ -6,15 +6,17 @@ This is a simple .Net solution to demonstrate working with [Orbbec Astra (Pro)](
 
 * Visualization of depth and color streams
 * Visualization of body tracking (as stick skeletons over depth map)
-* Calculation of actual FPS
+* Calculation of actual frame rate (FPS, frames per second)
 * Support for multiple sensors connected to one PC
+* Registration mode switcher for depth stream (registration allows to align depth map with color image)
+* Any CPU (support for both 32-bit and 64-bit architectures)
 
 
 ### How to use:
 
 * Open `AstraDotNetDemo.sln` in Visual Studio 2017
 * Build and run `AstraTestWpf` application (F5)
-* All required binaries and libraries are already in repository (see `externals` folder)
+* All required binaries and libraries are already in repository (see `externals` folder) and are copied automatically to output directory during build
 
 
 ### Stuff used to make this:
@@ -24,9 +26,8 @@ This is a simple .Net solution to demonstrate working with [Orbbec Astra (Pro)](
  * [Astra SDK v2.0.9](https://orbbec3d.com/develop/) (win32 and win64 versions for VS 2015)
 
 
-
 ### License:
 
 Astra SDK is licensed under Apache v2.0 and includes components of OpenNI and OpenCV projects.
 
-This sample code is licensed under MIT license.
+This sample code is licensed under [MIT license](https://opensource.org/licenses/MIT).

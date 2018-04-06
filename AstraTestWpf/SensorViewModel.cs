@@ -46,7 +46,6 @@ namespace AstraTestWpf
 
                 // Depth field of view and Chip ID
                 DepthFieldOfView = FormatFieldOfView(depthStream);
-                ChipId = depthStream.ChipId.ToString();
 
                 // To visualize depth map on UI
                 depthBuffer = new DepthBuffer(dispatcher, depthMode.Width, depthMode.Height);
@@ -164,8 +163,33 @@ namespace AstraTestWpf
             }
         }
 
-        /// <summary>Some ID of sensor. But for some reason Astra SDK always returns <c>1</c>.</summary>
-        public string ChipId { get; }
+        /// <summary>Registration mode for depth stream. <c>true</c> - registration is on, <c>false</c> - registration is off.</summary>
+        /// <remarks>
+        /// Registration mode allows to align depth with color.
+        /// That is, when registration mode is ON then each pixel on depth map corresponds to appropriate pixel on color image from sensor.
+        /// </remarks>
+        public bool IsDepthRegistrationEnabled
+        {
+            get => isDepthRegistrationEnabled;
+
+            set
+            {
+                if (value != IsDepthRegistrationEnabled)
+                {
+                    if (depthStream.SetDepthRegistration(value))
+                    {
+                        isDepthRegistrationEnabled = value;
+                        RaisePropertyChanged(nameof(IsDepthRegistrationEnabled));
+                    }
+                    else
+                    {
+                        // Something wrong.
+                        // Just beep to indicate that we cannot change registration mode for depth stream.
+                        Console.Beep();
+                    }
+                }
+            }
+        }
 
         /// <summary>String with information about current frame rate.</summary>
         public string FramesPerSecond
@@ -354,5 +378,6 @@ namespace AstraTestWpf
         private readonly FrameRateCalculator frameRateCalculator = new FrameRateCalculator(smoothCoeff: 0.75f);
         private readonly Thread backgroundProcessingThread;
         private volatile bool running;
+        private bool isDepthRegistrationEnabled;
     }
 }

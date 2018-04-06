@@ -66,9 +66,9 @@
                 <Label Grid.Column="0" Grid.Row="1">Field of View:</Label>
                 <TextBox Grid.Column="1" Grid.Row="1" IsReadOnly="True" Style="{StaticResource PropValueTextBox}"
                          Text="{Binding DepthFieldOfView, Mode=OneWay}"/>
-                <Label Grid.Column="0" Grid.Row="2">Chip ID:</Label>
-                <TextBox Grid.Column="1" Grid.Row="2" IsReadOnly="True" Style="{StaticResource PropValueTextBox}"
-                         Text="{Binding ChipId, Mode=OneWay}"/>
+                <Label Grid.Column="0" Grid.Row="2">Registration:</Label>
+                <CheckBox Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center"
+                          IsChecked="{Binding IsDepthRegistrationEnabled}"/>
                 <Label Grid.Column="0" Grid.Row="3">Is Mirroring:</Label>
                 <CheckBox Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center"
                           IsChecked="{Binding IsDepthMirroring}"/>

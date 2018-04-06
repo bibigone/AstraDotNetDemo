@@ -57,6 +57,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AstraSdkInterop.cs" />
     <Compile Include="BodyVisualizer.cs" />
     <Compile Include="BufferOfT.cs" />
     <Compile Include="ColorBuffer.cs" />
