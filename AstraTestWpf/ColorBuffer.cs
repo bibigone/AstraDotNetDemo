@@ -29,9 +29,11 @@ namespace AstraTestWpf
                 byte* srcPtr = innerBufferPtr + y * width * 3;
                 for (var x = 0; x < width; x++)
                 {
-                    *(dstPtr++) = *(srcPtr++);
-                    *(dstPtr++) = *(srcPtr++);
-                    *(dstPtr++) = *(srcPtr++);
+                    // reverse order to convert from RGB to BGR
+                    *(dstPtr++) = *(srcPtr + 2);
+                    *(dstPtr++) = *(srcPtr + 1);
+                    *(dstPtr++) = *srcPtr;
+                    srcPtr += 3;
                 }
             }
         }
