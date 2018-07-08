@@ -29,6 +29,9 @@ namespace AstraTestWpf
             bool withColor,
             bool withBodyTracking)
         {
+            if (withBodyTracking)
+                CheckThatFreeTrialOfBodyTrackingIsAvailable(settings);
+
             this.dispatcher = dispatcher;
             this.streamSet = streamSet;
 
@@ -90,6 +93,14 @@ namespace AstraTestWpf
                 streamSet.Dispose();
                 throw;
             }
+        }
+
+        private static void CheckThatFreeTrialOfBodyTrackingIsAvailable(Properties.Settings settings)
+        {
+            var today = DateTime.Now.Date;
+            var freeTrialEnd = settings.BodyTrackingFreeTrialEnd;
+            if (today >= freeTrialEnd)
+                throw new ApplicationException($"The Orbbec Body Tracking library (included with Astra SDK Beta) is free to use until {freeTrialEnd} but today is {today}.");
         }
 
         private static double ToDegrees(double radians) => Math.Round(radians * 180.0 / Math.PI, 1);
