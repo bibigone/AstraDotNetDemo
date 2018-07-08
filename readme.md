@@ -25,7 +25,7 @@ This is a simple .Net solution to demonstrate working with [Orbbec Astra (Pro)](
 2. When more than one sensor is connected to one and the same PC, the following limitations take place:
  * For Astra PRO sensors: lowering of frame rate to 15 FPS if color stream is on
  * For Astra PRO sensors: you can see live color stream only from one sensor (black screen for other sensors)
- * Body (skeletal) tracking works poorly if it is turned on for more than one sensor
+ * Body (skeletal) tracking doesn't work if it is turned on for more than one sensor
 3. Wrong information about field-of-view for color stream.
 4. Donot unplug sensor while application is running. In other case application may crash on exit.
 

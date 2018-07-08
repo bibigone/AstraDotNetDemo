@@ -44,7 +44,7 @@ Possibly working systems - these may work but are untested/unsupported at this t
 
 Orbbec Body Tracking trial time expiration
 ===============
-For this beta release, Orbbec Body Tracking expires on 2018/06/30
+For this beta release, Orbbec Body Tracking expires on 2018/09/30
 and will stop operating. Please make sure to update to a new version before then.
 You can now set your license string to extend the trial. See API notes below.
 
