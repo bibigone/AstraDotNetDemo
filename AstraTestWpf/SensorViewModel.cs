@@ -100,7 +100,7 @@ namespace AstraTestWpf
             var today = DateTime.Now.Date;
             var freeTrialEnd = settings.BodyTrackingFreeTrialEnd;
             if (today >= freeTrialEnd)
-                throw new ApplicationException($"The Orbbec Body Tracking library (included with Astra SDK Beta) is free to use until {freeTrialEnd} but today is {today}.");
+                throw new ApplicationException($"The Orbbec Body Tracking library (included with Astra SDK 2.0.14) is free to use until {freeTrialEnd} but today is {today}.");
         }
 
         private static double ToDegrees(double radians) => Math.Round(radians * 180.0 / Math.PI, 1);

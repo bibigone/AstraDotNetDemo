@@ -103,8 +103,8 @@
       <Link>Astra\amd64\opencv_video248.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\externals\AstraSDK.bin\amd64\OpenNI2\Drivers\orbbec.dll">
-      <Link>Astra\amd64\OpenNI2\Drivers\orbbec.dll</Link>
+    <Content Include="..\externals\AstraSDK.bin\amd64\orbbec.dll">
+      <Link>Astra\amd64\orbbec.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="..\externals\AstraSDK.bin\amd64\Plugins\openni_sensor.dll">
@@ -159,8 +159,8 @@
       <Link>Astra\x86\OpenNI2.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\externals\AstraSDK.bin\x86\OpenNI2\Drivers\orbbec.dll">
-      <Link>Astra\x86\OpenNI2\Drivers\orbbec.dll</Link>
+    <Content Include="..\externals\AstraSDK.bin\x86\orbbec.dll">
+      <Link>Astra\x86\orbbec.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="..\externals\AstraSDK.bin\x86\Plugins\openni_sensor.dll">
@@ -267,16 +267,16 @@
       <Link>Astra\x86\Plugins\orbbec_hand.toml</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\externals\AstraSDK.bin\x86\OpenNI2\Drivers\orbbec.ini">
-      <Link>Astra\x86\OpenNI2\Drivers\orbbec.ini</Link>
+    <Content Include="..\externals\AstraSDK.bin\x86\orbbec.ini">
+      <Link>Astra\x86\orbbec.ini</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="..\externals\AstraSDK.bin\amd64\Plugins\orbbec_hand.toml">
       <Link>Astra\amd64\Plugins\orbbec_hand.toml</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\externals\AstraSDK.bin\amd64\OpenNI2\Drivers\orbbec.ini">
-      <Link>Astra\amd64\OpenNI2\Drivers\orbbec.ini</Link>
+    <Content Include="..\externals\AstraSDK.bin\amd64\orbbec.ini">
+      <Link>Astra\amd64\orbbec.ini</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Properties\Settings.settings">
