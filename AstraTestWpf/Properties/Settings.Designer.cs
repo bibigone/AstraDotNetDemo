@@ -79,7 +79,7 @@ namespace AstraTestWpf.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2019-03-31")]
+        [global::System.Configuration.DefaultSettingValueAttribute("2019-06-30")]
         public global::System.DateTime BodyTrackingFreeTrialEnd {
             get {
                 return ((global::System.DateTime)(this["BodyTrackingFreeTrialEnd"]));

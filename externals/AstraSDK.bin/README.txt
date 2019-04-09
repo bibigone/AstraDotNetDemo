@@ -1,5 +1,5 @@
-Astra SDK v2.0.9-beta3
-Copyright (c) 2015-2018 Orbbec
+Astra SDK v2.0.15
+Copyright (c) 2015-2019 Orbbec
 https://www.orbbec3d.com
 
 For help and support, visit us at https://3dclub.orbbec3d.com.
@@ -39,20 +39,304 @@ Supported languages & frameworks
 
 Possibly working systems - these may work but are untested/unsupported at this time
 ========================
-* Android 6.0, Android 7.0
-* Unity3D 2017, Unity 4.7
+* Android 6.0, Android 7.0, Android 8.1
+* Unity3D 2017, Unity3D 2018, Unity 4.7
 
 Orbbec Body Tracking trial time expiration
 ===============
-For this beta release, Orbbec Body Tracking expires on 2018/09/30
+For this release, Orbbec Body Tracking expires on 2019/06/30
 and will stop operating. Please make sure to update to a new version before then.
-You can now set your license string to extend the trial. See API notes below.
+You can now set your license string to extend the trial. See API notes below for
+orbbec_body_tracking_set_license().
 
 For support on the trial expiration or to extend your trial, please contact
 info@orbbec3d.com.
 
 What's New
 ==========
+
+v2.0.15 2019/03/15
+* Add support for the Orbbec Astra Deeyea camera model and Orbbec Astra DaBai camera model.
+* Add device opened notification callbacks on Android for Unity. You can implement this
+  interface and use it when calling "openAllDevices" on "AstraUnityPlayerActivity",
+  For more information, see AstraUnityContext.cs in Unity Sample.
+  C#:
+    public class AstraDeviceManagerListener : AndroidJavaProxy
+    {
+        public AstraDeviceManagerListener() : 
+            base("com.orbbec.astra.android.AstraDeviceManagerListener") {}
+
+        //When open completed will call this. In this function, before you create streams,
+        //you should check the number of available devices by calling "getAvailableDevicesSize"
+        //on "AstraUnityPlayerActivity". If number is zero, Don't create streams.
+        void onOpenAllDevicesCompleted(AndroidJavaObject availableDevices) {}
+
+        //Can't work currently.
+        void onOpenDeviceCompleted(AndroidJavaObject device, AndroidJavaObject opened) {}
+
+        //There is no Orbbec device to open.
+        void onNoDevice() {}
+
+        //Requesting usb permission is denied by user.
+        void onPermissionDenied(AndroidJavaObject device){}
+    }
+* Support getting NV21 format image from ColorStream on Android when using Astra Pro and
+  Astra Pro Plus.
+  Java: ColorStream stream = ColorStream.getNV21ColorStream(streamReader);
+        ColorFrame colorFrame = ColorFrame.getNV21ColorFrame(readerFrame);
+  C#:   using Astra.Core;
+        ColorStream stream = streamReader.GetStream<ColorStream>(StreamSubType.COLOR_NV21_SUBTYPE);
+        ColorFrame colorFrame = frame.GetFrame<ColorFrame>(StreamSubType.COLOR_NV21_SUBTYPE);
+* Add D (for Deeyea and DaBai) keyboard shortcut to SimpleDepthViewer-SFML, SimpleBodyViewer-SFML
+  and MaskedColorViewer-SFML to work with Deeyea and DaBai.
+* Add N keyboard shortcut to MaskedColorViewer-SFML to mirror color stream.
+* Support skeleton recognition for five people.
+
+
+v2.0.14 2018/12/10
+* Add device opened notification callbacks on Android
+* Improve body joint alignment with depth image (fix issue related to field-of-view)
+
+v2.0.13 2018/11/22
+* Add Skeleton Optimization level APIs. The optimization level gives the developer
+  control over the balance between memory usage and accuracy for skeleton tracking.
+  There are 9 optimization levels, with 1 being the minimum memory but worst tracking
+  accuracy, and 9 requiring the most memory but best tracking accuracy. Level 9 is
+  the default. Level 2 is the minimum recommended level. Optimization enums have suggested
+  values: Min Memory = 2, Balanced = 5, Best Accuracy = 9.
+  C:    astra_skeleton_optimization_t optimization;
+        astra_bodystream_get_skeleton_optimization(bodyStream, &optimization);
+        astra_bodystream_set_skeleton_optimization(bodyStream, optimization);
+  C++:  SkeletonOptimization optimization = bodyStream.get_skeleton_optimization();
+        bodyStream.set_skeleton_optimization(optimization);
+  C#:   SkeletonProfile optimization = bodyStream.GetSkeletonProfile();
+        bodyStream.SetSkeletonProfile(optimization);
+  Java: SkeletonOptimization optimization = bodyStream.getSkeletonOptimization();
+        bodyStream.setSkeletonOptimization(optimization);
+* Unity sample has been updated with UI controls for Skeleton Optimization
+* SkeletonProfile.UpperBody is now available. This profile includes all joints
+  above MidSpine. Unity sample has been updated with UI option to select Upper Body Profile.
+* POTENTIALLY BREAKING: The Java wrapper has been updated so that various classes
+  that were marked public are now internal.
+* Add support for the Orbbec Astra Pro Plus camera model.
+* Docs now contains more docs.
+* C# wrapper now allocates even less garbage-collected memory per frame.
+* Add "Debug Text" toggle option in Unity wrapper sample application. This is enabled
+  by default. When disabled, the FPS display and internal timings are cleared.
+  This reduces the GC memory allocation by approximately 2k per frame, useful for profiling.
+* Fix stream corruption issue in Unity wrapper sample application when switching scenes.
+* Fix issue where depth stream may be stopped when the color stream was stopped,
+  and vice versa.
+* Fix issue where MaskedColorStream and ColorizedBodyStream both stopped when one
+  of those streams was stopped.
+* Fix issue where terminating and then initializing the SDK on Android didn't work.
+* Frame skipping is now disabled in Orbbec Body Tracking. We expect that
+  previous improvements to the Unity wrapper allowing asynchronous processing
+  will result in a better overall experience.
+* Minor internal bug fixes
+* Internal code cleanup
+
+v2.0.12 2018/09/30
+* In C++ API, RGBAPixel was renamed to RgbaPixel for style consistency.
+  There is a typedef RgbaPixel RGBAPixel; so existing code still works,
+  but RGBAPixel is deprecated.
+* Adds C++-style serial number API to C++ API:
+  C++:    DepthStream depthStream = [...];
+          std::string serialNumber = depthStream.serial_number();
+  The existing C-style method in the DepthStream class is still available
+  for compatibility reasons but is considered deprecated:
+          void serial_number(char* serialnumber, uint32_t length) const;
+* Add astra_reader_has_new_frame() thread-safe C API and implementation.
+
+  This method is designed to be safe to call from any thread. Internally,
+  it stores the status in an atomic_bool, which is thread-safe.
+  The reason for making this thread-safe is so that astra_update() can
+  be called in a loop in a background thread, and the main thread can
+  check whether it should try to sync with the background thread so that
+  it can open a new frame from readers.
+
+  This is a short-term solution that helps support a specific threading
+  scenario until the full Astra API is updated to be thread-safe. In this
+  threading scenario, the app must guarantee that the Astra API is still
+  only called from one thread at a time through its own synchronization
+  (mutex, etc.), with the one exception that astra_reader_has_new_frame()
+  may be called from any thread.
+  C:    astra_reader_t reader = [...];
+        bool hasNewFrame;
+        reader_has_new_frame(reader, &hasNewFrame)
+  C++:  astra::StreamReader reader = [...];
+        bool hasNewFrame = reader.has_new_frame();
+  C#:   Astra.StreamReader reader = [...];
+        bool hasNewFrame = reader.HasNewFrame();
+  Java: Astra.StreamReader reader = [...];
+        boolean hasNewFrame = reader.hasNewFrame();
+* Add P (for Profile) keyboard shortcut to SimpleBodyViewer-SFML to toggle
+  between Full skeleton profile and Basic skeleton profile.
+* Add T (for Tracking) keyboard shortcut to SimpleBodyViewer-SFML to toggle
+  between Segmentation, Segmentation+Body, and Segmentation+Body+HandPoses
+  as default body feature tracking states.
+* Performance of MaskedColorStream processing has been improved significantly
+  (roughly 4x faster depending upon platform and image ratios) through the use
+  of cross-platform SIMD code.
+* Fix issue in Java wrapper where MaskedColorStream/ColorizedBodyStream used
+  ImageStream as base class. Those now derive from DataStream as intended.
+* Fix issue in Java wrapper where PointFrame.getPointBuffer() called itself
+  recursively instead of returning the point buffer. It now returns the point buffer.
+* Fix issue in Java wrapper where PointStream.get() wasn't public. It is now public.
+* Fix inconsistent definition/declaration of astra_core_version
+* Fix issue in OBT where skeletons would be tracked even in Segmentation-only mode
+* Fix issue in OBT where if a user moves further than four meters from the sensor
+  (the max for skeleton tracking) the user would not get skeleton tracking again
+  until they left the frame completely. Now the user can walk further than four meters
+  then closer and will get skeleton tracking again.
+* Fix issue in OBT where a class was inappropriately being used by multiple threads
+  and caused some rare crashes on certain Android machines. Now each thread has its
+  own instance of the class.
+* Fix issue in OBT where changing the SkeletonProfile would not re-initialize a
+  type properly. The type now reinitialized property.
+* Fix issue in OBT where the legs was not allowed to rotate more than a
+  certain angle. The legs can now be tracked with larger leg swings.
+* Streams now used aligned memory allocation for all stream bins. This is to support
+  SIMD operations on bin data.
+* Add ASTRA_ALIGN(N) macro to headers to explcitly align certain fields as necessary.
+* Update CMakeLists so Astra SDK can be built with Visual Studio 2017 (compiler 19.14).
+* Refactor software-registration code in MaskedColorStream for legacy Astra mx400 cameras
+* Internal changes to protect against some crashes in certain multi-threading
+  scenarios. With the exception of astra_reader_has_new_frame(), the API
+  must still be called from only a single thread. Deadlocks and crashes are
+  still possible if multiple threads access the API simultaneously.
+* Minor changes to naming and refactoring to sample code to clarify the purpose of the code
+* Internal code cleanup
+
+
+v2.0.11-beta5 2018/08/01
+* BREAKING: In Java, Body.getId() now returns an int instead of a byte.
+  This fixes an issue where body ids would appear to be negative when the id
+  is greater than 127.
+* Add SkeletonProfile API. This allows the developer to select from several options
+  for which skeleton joints are tracked. Full profile tracks all available joints
+  and basic profile only tracks head, MidSpine, left hand, and right hand.
+  Basic profile is more accurate for the tracked joints and takes less time to track.
+  C:    astra_skeleton_profile_t profile;
+        astra_bodystream_get_skeleton_profile(bodyStream, &profile);
+        astra_bodystream_set_skeleton_profile(bodyStream, profile);
+        Valid options for astra_skeleton_profile_t include:
+        ASTRA_SKELETON_PROFILE_FULL
+        ASTRA_SKELETON_PROFILE_BASIC
+  C++:  bodyStream.set_skeleton_profile(SkeletonProfile::Full); // or SkeletonProfile::Basic
+        SkeletonProfile profile = bodyStream.get_skeleton_profile();
+  C#:   bodyStream.SetSkeletonProfile(SkeletonProfile.Full); // or SkeletonProfile.Basic
+        SkeletonProfile profile = bodyStream.GetSkeletonProfile();
+  Java: bodyStream.setSkeletonProfile(SkeletonProfile.Full); // or SkeletonProfile.Basic
+        SkeletonProfile profile = bodyStream.getSkeletonProfile();
+* Improve the C# wrapper to significantly reduce heap allocation.
+* Optimized Android yuv2rgb conversion, saving up to 2.5ms on low-end Android boxes
+* Fix issue where the body center of mass could be NaN if certain joints were not tracked
+* Fix issue where OpenNI2 could crash if the driver dlls are in a non-standard directory
+* Fix issue where a zero byte astra.log is created even if file_output is false in astra.toml.
+  Now astra.log is no longer created when file_output is false.
+* Fix issue where some plugins were requesting the device serial number with too small
+  of a string. 256 bytes is recommended the serial number char[] size.
+* Fix out-of-bounds memory access in Orbbec Body Tracking
+* Fix issue where OBT licensing periodic check can fail after the trial expiration date,
+  even with a valid license
+* Fix issue in OBT where the position of the head joint was inappropriately influenced
+  by other joints
+* Fix bug where if the first body frame is estimated (due to a very slow CPU) then
+  the body frame would have garbage data. The data is now properly initialized.
+* Fix issue where skeletonizer could have been deleted twice
+* Refactor data loading methods in OBT to reduce memory overhead and slightly
+  reduce startup time.
+* Internal improvements to performance profiling and fixing some minor compiler warnings.
+
+
+v2.0.10-beta4 2018/07/05
+
+* BREAKING: In C++, the CoordinateMapper class's methods convert_depth_to_world()
+  and convert_world_to_depth() now take the output parameters by reference instead of by pointer:
+  void convert_depth_to_world(float  depthX, float  depthY, float  depthZ,
+                              float& worldX, float& worldY, float& worldZ) const;
+  void convert_world_to_depth(float  worldX, float  worldY, float  worldZ,
+                              float& depthX, float& depthY, float& depthZ) const;
+* Add stream availability API. This allows developers to determine if a stream will
+  ever return data. A stream may not be available if the sensor is not plugged in or
+  if the sensor or plugin does not support that stream. This may depend upon the current
+  sensor configuration. A stream that is not available will not receive start()/stop() commands
+  and will not process get/set/invoke commands such as setting the resolution.
+  Once the stream becomes available, you must call start() and configure the resolution.
+  C:    astra_depthstream_is_available(astra_depthstream_t depthStream, bool* isAvailable)
+        and similar for every other stream
+  C++:  astra::DepthStream depthStream = reader.stream<astra::DepthStream>();
+        bool isAvailable = depthStream.is_available()
+        and similar for every other stream
+  C#:   DepthStream depthStream = reader.GetStream<DepthStream>();
+        bool isAvailable = depthStream.IsAvailable;
+        and similar for every other stream
+  Java: DepthStream depthStream = DepthStream.get(reader);
+        boolean isAvailable = depthStream.getIsAvailable();
+* Add StreamSet availability API. This allows developers to determine if a StreamSet is available.
+  A StreamSet is available when a sensor is plugged in that matches the StreamSet URI such as device/sensor0.
+  If a sensor is unplugged or was not yet plugged in, the StreamSet is not available.
+  Any streams accessed from an unavailable StreamSet will also be unavailable.
+  C:    astra_streamsetconnection_t streamSet;
+        astra_streamset_open("device/sensor1", &streamSet);
+        astra_streamset_is_available(streamSet, bool* isAvailable);
+  C++:  StreamSet streamSet("device/sensor1");
+        bool isAvailable = streamSet.is_available();
+  C#:   StreamSet streamSet = StreamSet.Open("device/sensor1");
+        bool isAvailable = streamSet.IsAvailable;
+  Java: StreamSet streamSet = StreamSet.open("device/sensor1");
+        boolean isAvailable = streamSet.getIsAvailable();
+* Add StreamSet URI API. This allows developers to determine the URI of a StreamSet.
+  Typically this is the URI that is passed in when opening the StreamSet, but if the
+  StreamSet was default constructed or used "device/default", then the URI will be
+  "device/sensor0".
+  C:    char uri[ASTRA_STREAMSET_URI_MAX_LENGTH];
+        astra_streamsetconnection_t streamSet;
+        astra_streamset_open("device/default", &streamSet);
+        astra_streamset_get_uri(streamSet, uri, ASTRA_STREAMSET_URI_MAX_LENGTH);
+        // uri now contains "device/sensor0"
+        The method copies the URI into the char* memory provided by the caller.
+  C++:  StreamSet streamSet;
+        std::string uri = streamSet.uri(); //"device/sensor0"
+  C#:   StreamSet streamSet = StreamSet.Open();
+        string uri = streamSet.Uri; //"device/sensor0"
+  Java: StreamSet streamSet = StreamSet.open();
+        String uri = streamSet.getUri();
+* Add IsEstimated API for BodyFrame in C# and Java wrappers. This was previously
+  added to BodyFrameInfo, but in those wrappers BodyFrameInfo is not accessible.
+  This fixes the issue and publicly exposes IsEstimated.
+  C#:   bool isEstimated = bodyFrame.IsEstimated;
+  Java: boolean isEstimated = bodyFrame.getIsEstimated();
+* DepthStream field-of-view now changes when registration is enabled. When registration
+  is enabled, the DepthStream field-of-view matches the ColorStream.
+* Update body tracking to use correct field-of-view as provided by the DepthStream
+* Optimized memory usage in Orbbec Body Tracker to reduce overall RAM usage by about 50 MB.
+  Accessing less memory also leads to a small performance improvement.
+* Fix issue where bodies that went beyond the max skeleton range of 4 meters would never
+  get their skeletons back when they come back within 4 meters.
+* Fix issue where sometimes a UVC color device (e.g. Astra Pro color) fails to open.
+  The UVC device may fail to open if the device is not ready yet. Now the SDK will
+  attempt to open the UVC device repeatedly with a short delay between each attempt.
+* Fixes a crash on Linux when more than one UVC color device (Astra Pro) is plugged in.
+  The SDK still only supports one UVC color devices at a time, but now additional UVC
+  color devices will not cause a crash and you can use the non-color streams from
+  the additional sensors.
+* Fix issue where the stream bin system would allocate more memory than necessary.
+  This reduces the memory usage of active streams.
+* Fix issue in MaskedColorStream when the resolution of the color stream is smaller
+  than the resolution of the body stream/depth stream.
+* Fix issue in SimpleBodyViewer-SFML where the Neck and Wrist joints were not properly
+  connected to the skeleton visualization
+* Fix Java JNI bug where getting a boolean property (such as getMirroring(), getRegistration())
+  may not have returned the correct value.
+* Fix issue where an internal stage of the hand pose recognizer selected an incorrect value
+  from a list of points on the user's hand.
+* Fix issue where an internal stage of the hand pose recognizer may have dereferenced invalid memory
+* Fix issue in body tracking where an iterator was used incorrectly when erasing lost bodies
+* Fix various minor logic issues found when auditing the Orbbec Body Tracking segmentation module
+* Various internal code cleanup and minor changes to support new features
+* Orbbec Body Tracking trial expiration set to September 30, 2018
 
 v2.0.9-beta3 2018/03/31
 
@@ -332,10 +616,6 @@ Known Issues
 
 * Bone orientation/rotation can be inconsistent if passing through ambiguous positions, such as
   rotating the arm while it is straight out with the elbow unbent.
-
-* On Android, body tracking performance is being improved. With all streams running, our
-  Unity sample gets roughly 17 FPS on Orbbec Persee. With just the body stream, the Unity
-  sample gets 30 FPS on Orbbec Persee.
 
 * There are some APIs that are missing: camera hardware configuration (white balance, exposure, etc.),
   controlling the IR projector and Astra Mini IR flood, etc. These are coming soon.
