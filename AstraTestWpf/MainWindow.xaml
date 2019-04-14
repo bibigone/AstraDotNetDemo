@@ -8,7 +8,9 @@
         SizeToContent="WidthAndHeight"
         ResizeMode="NoResize">
     <StackPanel Margin="10" Orientation="Vertical">
+        <CheckBox Margin="3" Padding="3" x:Name="checkBoxWithDepth" VerticalContentAlignment="Center">With depth?</CheckBox>
         <CheckBox Margin="3" Padding="3" x:Name="checkBoxWithColor" VerticalContentAlignment="Center">With color?</CheckBox>
+        <CheckBox Margin="3" Padding="3" x:Name="checkBoxWithInfrared" VerticalContentAlignment="Center">With infrared?</CheckBox>
         <CheckBox Margin="3" Padding="3" x:Name="checkBoxWithBodyTracking" VerticalContentAlignment="Center">With bodyTracking?</CheckBox>
         <Button Margin="3" Padding="3" Content="Open Sensor #0" Click="OpenSensor0"/>
         <Button Margin="3" Padding="3" Content="Open Sensor #1" Click="OpenSensor1"/>

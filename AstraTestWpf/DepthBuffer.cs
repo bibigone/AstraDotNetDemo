@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace AstraTestWpf
@@ -18,7 +19,7 @@ namespace AstraTestWpf
         /// <param name="width">Width of depth map in pixels.</param>
         /// <param name="height">Height of depth map in pixels.</param>
         public DepthBuffer(Dispatcher dispatcher, int width, int height)
-            : base(dispatcher, width, height, PixelFormat, BytesPerPixel)
+            : base(dispatcher, width, height, PixelFormat, BytesPerPixel, PixelFormats.Bgr24)
         { }
 
         protected override unsafe void FillWritableBitmapLine(int y, IntPtr backBuffer, int backBufferStride)

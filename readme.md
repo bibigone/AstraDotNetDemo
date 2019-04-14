@@ -1,3 +1,6 @@
+I Forked this repository to add Infrared stream visualization.
+
+
 # AstraDotNet Demo
 
 This is a simple .Net solution to demonstrate working with [Orbbec Astra (Pro)](https://orbbec3d.com/product-astra/) depth sensors from C#.

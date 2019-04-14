@@ -26,7 +26,9 @@ namespace AstraTestWpf
             Properties.Settings settings,
             Dispatcher dispatcher,
             Astra.StreamSet streamSet,
+            bool withDepth,
             bool withColor,
+            bool withInfrared,
             bool withBodyTracking)
         {
             if (withBodyTracking)
@@ -41,22 +43,33 @@ namespace AstraTestWpf
             try
             {
                 // Get depth steam from reader
-                depthStream = streamReader.GetStream<Astra.DepthStream>();
+                if (withDepth)
+                {
+                    depthStream = streamReader.GetStream<Astra.DepthStream>();
 
-                // Chose appropriate mode
-                var depthMode = SetDepthMode(settings.DepthFps, settings.DepthWidth, settings.DepthHeight);
-                DepthMode = FormatMode(depthMode);
+                    // Chose appropriate mode
+                    var depthMode = SetDepthMode(settings.DepthFps, settings.DepthWidth, settings.DepthHeight);
+                    DepthMode = FormatMode(depthMode);
 
-                // Depth field of view and Chip ID
-                DepthFieldOfView = FormatFieldOfView(depthStream);
+                    // Depth field of view and Chip ID
+                    DepthFieldOfView = FormatFieldOfView(depthStream);
 
-                // To visualize depth map on UI
-                depthBuffer = new DepthBuffer(dispatcher, depthMode.Width, depthMode.Height);
+                    // To visualize depth map on UI
+                    depthBuffer = new DepthBuffer(dispatcher, depthMode.Width, depthMode.Height);
+
+                    // Body tracking (optional)
+                    if (withBodyTracking)
+                    {
+                        bodyStream = streamReader.GetStream<Astra.BodyStream>();
+                        bodyVisualizer = new BodyVisualizer(dispatcher, depthMode.Width, depthMode.Height);
+                    }
+                }
 
                 // Try to initialize color stream (optional)
                 if (withColor)
-                {
+                {                    
                     colorStream = streamReader.GetStream<Astra.ColorStream>();
+
                     var colorMode = TrySetColorMode(settings.ColorFps, settings.ColorWidth, settings.ColorHeight);
                     if (colorMode == null)
                     {
@@ -70,16 +83,30 @@ namespace AstraTestWpf
                     }
                 }
 
-                // Body tracking (optional)
-                if (withBodyTracking)
+                // InfraredStream (uses a RGB888 format, and the same Color format)
+                if (withInfrared)
                 {
-                    bodyStream = streamReader.GetStream<Astra.BodyStream>();
-                    bodyVisualizer = new BodyVisualizer(dispatcher, depthMode.Width, depthMode.Height);
+                    infraredStream = streamReader.GetStream<Astra.InfraredStream>();
+
+                    var infraredMode = TrySetInfraredMode(settings.ColorFps, settings.ColorWidth, settings.ColorHeight);
+                    if (infraredMode == null)
+                    {
+                        infraredStream = null;
+                    }
+                    else
+                    {
+                        InfraredMode = FormatMode(infraredMode);
+                        InfraredFieldOfView = FormatFieldOfView(infraredStream);
+                        infraredBuffer = new InfraredBuffer(dispatcher, infraredMode.Width, infraredMode.Height);
+                    }
                 }
 
+                
+
                 // Start streaming
-                depthStream.Start();
+                depthStream?.Start();
                 colorStream?.Start();
+                infraredStream?.Start();
                 bodyStream?.Start();
 
                 // Run background thread to process frames
@@ -150,6 +177,28 @@ namespace AstraTestWpf
             }
         }
 
+        private Astra.ImageMode TrySetInfraredMode(int fps, int width, int height)
+        {
+            try
+            {
+                var mode = infraredStream.AvailableModes
+                    .FirstOrDefault(m => m.PixelFormat == InfraredBuffer.PixelFormat
+                        && m.FramesPerSecond == fps
+                        && m.Width == width
+                        && m.Height == height);
+                if (mode == null)
+                    return null;
+                infraredStream.SetMode(mode);
+                infraredStream.IsMirroring = false;        // Turn off mirroring by default
+                return mode;
+            }
+            catch (Astra.AstraException exc)
+            {
+                Trace.TraceWarning("Cannot initialize color stream: " + exc.Message);
+                return null;
+            }
+        }
+
         /// <summary>String with information about current depth mode.</summary>
         public string DepthMode { get; }
 
@@ -162,7 +211,7 @@ namespace AstraTestWpf
         /// <summary>Is depth map mirroring? Can be changed on the fly.</summary>
         public bool IsDepthMirroring
         {
-            get => depthStream.IsMirroring;
+            get => depthStream?.IsMirroring ?? false;
 
             set
             {
@@ -213,14 +262,14 @@ namespace AstraTestWpf
         }
 
         /// <summary>String with information about current color mode.</summary>
-        public string ColorMode { get; }
+        public string ColorMode { get; }       
 
         /// <summary>String with information about field of view of color camera.</summary>
-        public string ColorFieldOfView { get; }
+        public string ColorFieldOfView { get; }       
 
         /// <summary>Color frame received from sensor.</summary>
         /// <remarks>Can be <c>null</c> here because color stream is optional.</remarks>
-        public BitmapSource ColorImageSource => colorBuffer?.ImageSource;
+        public BitmapSource ColorImageSource => colorBuffer?.ImageSource;      
 
         /// <summary>Is color image mirroring? Can be changed on the fly.</summary>
         public bool IsColorMirroring
@@ -237,6 +286,29 @@ namespace AstraTestWpf
             }
         }
 
+        // Infrared
+
+        public string InfraredMode { get; }
+        public string InfraredFieldOfView { get; }
+        public BitmapSource InfraredImageSource => infraredBuffer?.ImageSource;
+
+        /// <summary>Is infrare image mirroring? Can be changed on the fly.</summary>
+        public bool IsInfraredMirroring
+        {
+            get => infraredStream?.IsMirroring ?? false;
+
+            set
+            {
+                if (infraredStream != null && value != IsInfraredMirroring)
+                {
+                    infraredStream.IsMirroring = value;
+                    RaisePropertyChanged(nameof(IsInfraredMirroring));
+                }
+            }
+        }
+
+
+
         /// <summary>Visualization of body tracking - skeletons. Shown on UI as overlay over depth map image.</summary>
         /// <remarks>Can be <c>null</c> here because body tracking is optional.</remarks>
         public ImageSource BodyImageSource => bodyVisualizer?.ImageSource;
@@ -252,6 +324,7 @@ namespace AstraTestWpf
             backgroundProcessingThread.Join();
             StopStreamNoThrow(bodyStream, nameof(bodyStream));
             StopStreamNoThrow(colorStream, nameof(colorStream));
+            StopStreamNoThrow(infraredStream, nameof(infraredStream));
             StopStreamNoThrow(depthStream, nameof(depthStream));
             SafeDispose(streamReader, nameof(streamReader));
             SafeDispose(streamSet, nameof(streamSet));
@@ -337,25 +410,35 @@ namespace AstraTestWpf
         // Handling of new frame
         private void HandleFrame(Astra.ReaderFrame frame)
         {
-            HandleDepthFrame(frame);
+            if (depthBuffer != null)
+                HandleDepthFrame(frame);
             if (colorBuffer != null)
                 HandleColorFrame(frame);
+            if (infraredBuffer != null)
+                HandleInfraredFrame(frame);
             if (bodyVisualizer != null)
                 HandleBodyFrame(frame);
+
+            if (frameRateCalculator.RegisterFrame())
+                RaisePropertyChanged(nameof(FramesPerSecond));
         }
 
         private void HandleDepthFrame(Astra.ReaderFrame frame)
         {
             var depthFrame = frame.GetFrame<Astra.DepthFrame>();
-            if (depthBuffer.Update(depthFrame))
-                if (frameRateCalculator.RegisterFrame())
-                    RaisePropertyChanged(nameof(FramesPerSecond));
+            depthBuffer.Update(depthFrame);               
         }
 
         private void HandleColorFrame(Astra.ReaderFrame frame)
         {
             var colorFrame = frame.GetFrame<Astra.ColorFrame>();
             colorBuffer.Update(colorFrame);
+        }
+
+        private void HandleInfraredFrame(Astra.ReaderFrame frame)
+        {
+            var infraredFrame = frame.GetFrame<Astra.InfraredFrame>();
+            infraredBuffer.Update(infraredFrame);
         }
 
         private void HandleBodyFrame(Astra.ReaderFrame frame)
@@ -382,9 +465,11 @@ namespace AstraTestWpf
         private readonly Astra.StreamReader streamReader;
         private readonly Astra.DepthStream depthStream;
         private readonly Astra.ImageStream colorStream;
+        private readonly Astra.ImageStream infraredStream;
         private readonly Astra.BodyStream bodyStream;
         private readonly DepthBuffer depthBuffer;
         private readonly ColorBuffer colorBuffer;
+        private readonly InfraredBuffer infraredBuffer;
         private readonly BodyVisualizer bodyVisualizer;
         private readonly FrameRateCalculator frameRateCalculator = new FrameRateCalculator(smoothCoeff: 0.75f);
         private readonly Thread backgroundProcessingThread;

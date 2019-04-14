@@ -20,18 +20,25 @@ namespace AstraTestWpf
 
         private void OpenSensor(int sensorIndx)
         {
+            var withDepth = checkBoxWithDepth.IsChecked ?? false;
             var withColor = checkBoxWithColor.IsChecked ?? false;
+            var withInfrared = checkBoxWithInfrared.IsChecked ?? false;
             var withBodyTracking = checkBoxWithBodyTracking.IsChecked ?? false;
-            OpenSensor(sensorIndx, withColor, withBodyTracking);
+            OpenSensor(sensorIndx, withDepth, withColor, withInfrared, withBodyTracking);
         }
 
-        private void OpenSensor(int sensorIndx, bool withColor, bool withBodyTracking)
+        private void OpenSensor(int sensorIndx, bool withDepth, bool withColor, bool withInfrared, bool withBodyTracking)
         {
             try
             {
                 var connectionString = "device/sensor" + sensorIndx.ToString(CultureInfo.InvariantCulture);
                 var set = Astra.StreamSet.Open(connectionString);
-                var sensorViewModel = new SensorViewModel(Properties.Settings.Default, Dispatcher, set, withColor, withBodyTracking);
+                
+                var sensorViewModel = new SensorViewModel(Properties.Settings.Default, Dispatcher, set, 
+                    withDepth: withDepth,
+                    withColor:withColor, 
+                    withInfrared: withInfrared, 
+                    withBodyTracking: withBodyTracking);
 
                 var wnd = new SensorWindow(sensorViewModel) { Owner = this };
                 wnd.Title += " #" + sensorIndx;

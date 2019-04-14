@@ -28,7 +28,7 @@ namespace AstraTestWpf
         /// <param name="height">Height of frame in pixels.</param>
         /// <param name="pixelFormat">Pixel format of frame.</param>
         /// <param name="bytesPerPixel">Byte count per one pixel.</param>
-        protected Buffer(Dispatcher dispatcher, int width, int height, Astra.PixelFormat pixelFormat, int bytesPerPixel)
+        protected Buffer(Dispatcher dispatcher, int width, int height, Astra.PixelFormat pixelFormat, int bytesPerPixel, PixelFormat writebleBitmapFormat)
         {
             if (dispatcher.Thread != Thread.CurrentThread)
             {
@@ -42,7 +42,7 @@ namespace AstraTestWpf
             this.pixelFormat = pixelFormat;
 
             innerBuffer = new byte[width * height * bytesPerPixel];
-            writeableBitmap = new WriteableBitmap(width, height, 96, 96, PixelFormats.Bgr24, null);
+            writeableBitmap = new WriteableBitmap(width, height, 96, 96, writebleBitmapFormat, null);
         }
 
         /// <summary>
