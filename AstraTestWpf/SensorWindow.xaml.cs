@@ -39,6 +39,11 @@ namespace AstraTestWpf
             CopyToClipboard(ViewModel?.ColorImageSource);
         }
 
+        private void CopyInfraredImageToClipboard(object sender, RoutedEventArgs e)
+        {
+            CopyToClipboard(ViewModel?.InfraredImageSource);
+        }
+
         private static void CopyToClipboard(BitmapSource bitmap)
         {
             if (bitmap == null)

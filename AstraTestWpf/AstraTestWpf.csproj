@@ -61,6 +61,7 @@
     <Compile Include="BodyVisualizer.cs" />
     <Compile Include="BufferOfT.cs" />
     <Compile Include="ColorBuffer.cs" />
+    <Compile Include="InfraredBuffer.cs" />
     <Compile Include="SensorViewModel.cs" />
     <Compile Include="SensorWindow.xaml.cs">
       <DependentUpon>SensorWindow.xaml</DependentUpon>

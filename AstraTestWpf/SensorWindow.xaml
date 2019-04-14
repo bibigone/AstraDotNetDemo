@@ -43,6 +43,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <!-- DEPTH -->
         <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Vertical">
@@ -127,8 +128,47 @@
                 </ContextMenu>
             </Image.ContextMenu>
         </Image>
+
+
+        <!-- INFRARED -->
+        <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Vertical">
+            <TextBlock Style="{StaticResource Header}">
+                I N F R A R E D
+            </TextBlock>
+            <Grid Margin="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Grid.Row="0">Mode:</Label>
+                <TextBox Grid.Column="1" Grid.Row="0" IsReadOnly="True" Style="{StaticResource PropValueTextBox}"
+                         Text="{Binding InfraredMode, Mode=OneWay}"/>
+                <Label Grid.Column="0" Grid.Row="1">Field of View:</Label>
+                <TextBox Grid.Column="1" Grid.Row="1" IsReadOnly="True" Style="{StaticResource PropValueTextBox}"
+                         Text="{Binding InfraredFieldOfView, Mode=OneWay}"/>
+                <Label Grid.Column="0" Grid.Row="2">Is Mirroring:</Label>
+                <CheckBox Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center"
+                          IsChecked="{Binding IsInfraredMirroring}"/>
+            </Grid>
+        </StackPanel>
+        <Image Grid.Column="2" Grid.Row="1" Source="{Binding InfraredImageSource, Mode=OneWay}">
+            <Image.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Copy to clipboard"
+                              Click="CopyInfraredImageToClipboard"/>
+                </ContextMenu>
+            </Image.ContextMenu>
+        </Image>
+
+
+
         <!-- FPS -->
-        <Grid Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" Margin="1" Background="LightGray">
+        <Grid Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2" Margin="1" Background="LightGray">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="auto"/>
